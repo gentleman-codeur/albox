@@ -1,89 +1,69 @@
 <?php
-require __DIR__.'/albox/config.php';
+require __DIR__.'/albox/bootstrap.php';
+//var_dump($_SERVER);
 
-$dir = opendir(DIR_IMAGES_MINI) or die('Erreur de listage : le répertoire n\'existe pas'); // on ouvre le contenu du dossier courant
-$fichier = array(); // on déclare le tableau contenant le nom des fichiers
-$dossier = array(); // on déclare le tableau contenant le nom des dossiers
-$sDir = null;
+// Déclaration du moteur de template
+$template = new Template();
 
-// Affichage des répertoires
-if(isset($_GET['dir']))
-{
-	$sDir = filter_var($_GET['dir'], FILTER_SANITIZE_URL);
-}
-$_dossiers = crawlDir(DIR_IMAGES_MINI.'/web/'.$sDir);
-
-// Si pas de répertoire à lister, on récupère la liste précédante
-if(sizeof($_dossiers) == 0)
-{
-	$_dossiers =  crawlDir(DIR_IMAGES_MINI.'/web/');
+$currentFolder = null;
+if(isset(Parameters::get()->currentFolder)){
+	$currentFolder = '/'.implode('/', Parameters::get()->currentFolder);
 }
 
-// Récupération des images
-$_images = listImage(DIR_IMAGES_MINI.'/web/'.$sDir);
+$_element = Folder::listing(__DIR__.$currentFolder);
 
-include __DIR__.'/albox/template.php';
+// Récupération de la liste des répertoires
+if (isset($_element['folder'])) {
+	$template->assign('_aFolders', $_element['folder']);
+}
 
+// Récupération de la liste des images
+if (isset($_element['image'])) {
 
-function listImage($dir_name)
-{
-	
-	$_images = array();
-	$dir = opendir($dir_name); // on ouvre le contenu du dossier courant
-	if(!$dir)
-	{
-		return false;
-	}
+	$oImage = new Image();
 
-	$fichier = array(); // on déclare le tableau contenant le nom des fichiers
-	$dossier = array(); // on déclare le tableau contenant le nom des dossiers
+	foreach ($_element['image'] as $images) {
+		
+		$pathImage = array();
+		$pathImage['normal'] = Parameters::get()->ndd.implode('/', Parameters::get()->currentFolder).'/'.$images;
 
-	while($element = readdir($dir)) 
-	{
-		if($element != '.' && $element != '..') 
-		{
-			if (!is_dir($dir_name.'/'.$element)) 
-			{
-				if(!file_exists( DIR_IMAGES_MINI.'/web/'.$dir_name.'/'.$element))
-				{
-					$_images[] = $element;
+		// Vérification de l'existance des dossiers miniature
+		foreach(Parameters::get()->sizeImage as $name => $size) {
+
+			// vérification si chaque dossier est bien créé
+			$currentFolderTest = null;
+			foreach(Parameters::get()->currentFolder as $folder) {
+				$currentFolderTest .= '/'.$folder;
+				if(!is_dir($_SERVER['DOCUMENT_ROOT'].Parameters::get()->resizeFolder.'/'.$name.$currentFolderTest)) {
+					mkdir($_SERVER['DOCUMENT_ROOT'].Parameters::get()->resizeFolder.'/'.$name.$currentFolderTest);
 				}
 			}
-		}
-	}
+			$pathSizeImage = Parameters::get()->ndd.Parameters::get()->resizeFolder.'/'.$name.$currentFolder;
+			// vérification si chaque image existe bien
+			if (!is_file($pathSizeImage.'/'.$images)) {
 
-	closedir($dir);
-
-	return $_images;
-
-}
-
-function crawlDir($dir_name){
-
-	$_dossier = array();
-	$dir = opendir($dir_name); // on ouvre le contenu du dossier courant
-	if(!$dir)
-	{
-		return false;
-	}
-
-	while($element = readdir($dir)) 
-	{
-		if($element != '.' && $element != '..') 
-		{
-			if (is_dir($dir_name.'/'.$element)) 
-			{
-				$_dossier[] = array(
-					'title' => $element,
-					'chemin' => $element
-				);
+				$pathImagesTest = $_SERVER['DOCUMENT_ROOT'].Parameters::get()->resizeFolder.'/'.$name.$currentFolderTest.'/'.$images;
+				if(!file_exists($pathImagesTest))
+				{
+					// Création de la miniature
+					if (file_exists($_SERVER['DOCUMENT_ROOT'].implode('/', Parameters::get()->currentFolder).'/'.$images)) {
+						$oImage->load($_SERVER['DOCUMENT_ROOT'].implode('/', Parameters::get()->currentFolder).'/'.$images);
+						$_aSize = Parameters::get()->sizeImage->$name;
+						$oImage->resize($_aSize[0], $_aSize[1]);
+						$oImage->save($pathImagesTest);
+					}
+				}
 			}
+			$pathImage[$name] = $pathSizeImage.'/'.$images;
 		}
+
+		$_aImages[] = array(
+			'name' => $images,
+			'path' => $pathImage
+		);
+
 	}
-
-	closedir($dir);
-
-	return $_dossier;
-
+	$template->assign('_aImages', $_aImages);
 }
 
+$template->render('index.php');
