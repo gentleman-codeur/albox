@@ -1,0 +1,9 @@
+{ 
+	"allowFormat": [ "jpg", "jpeg", "gif", "png" ],
+	"excludeFolder": [ ".git", "albox" ],
+	"sizeImage" : { 
+		"web" : [ 1024, 768 ],
+		"mini" : [ 153, 116 ]
+	},
+	"resizeFolder" : "albox/images"
+}
