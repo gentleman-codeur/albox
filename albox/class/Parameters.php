@@ -6,7 +6,7 @@ class Parameters {
 
 	static public function get()
 	{
-		if(!is_object(self::$parameters))
+		if(!is_array(self::$parameters))
 		{
 			die("Pas de fichier de configuration chargé");
 		}
@@ -15,28 +15,17 @@ class Parameters {
 
 	static public function load($file)
 	{
-		if(is_file($file))
-		{
-			$parameters = null;
-			$fp = fopen($file, "r");  
-			$content = fread($fp, filesize($file));  
-			$parameters = json_decode($content);
-			if(!is_object($parameters))
-			{
-				die("error can't read parameters.json");
-			}
-			fclose ($fp);
-		} else {
-			die("error can't find parameters.json");
+		// Avec un fichier ini
+		if(is_file($file)) {
+			$parameters = parse_ini_file($file, true);
 		}
-
 		self::$parameters = $parameters;
 		return true;
 	}
 
 	static public function set($key, $value)
 	{
-		self::$parameters->$key = $value;
+		self::$parameters[$key] = $value;
 	}
 
 }

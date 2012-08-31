@@ -1,16 +1,15 @@
 <?php
-require __DIR__.'/albox/bootstrap.php';
-//var_dump($_SERVER);
+require 'albox/bootstrap.php';
 
 // Déclaration du moteur de template
 $template = new Template();
 
 $currentFolder = null;
-if(isset(Parameters::get()->currentFolder)){
-	$currentFolder = '/'.implode('/', Parameters::get()->currentFolder);
+if(isset($Param['currentFolder'])){
+	$currentFolder = implode('/', $Param['currentFolder']);
 }
 
-$_element = Folder::listing(__DIR__.$currentFolder);
+$_element = Folder::listing($Param['pathRoot'].$currentFolder);
 
 // Récupération de la liste des répertoires
 if (isset($_element['folder'])) {
@@ -25,30 +24,30 @@ if (isset($_element['image'])) {
 	foreach ($_element['image'] as $images) {
 		
 		$pathImage = array();
-		$pathImage['normal'] = Parameters::get()->ndd.implode('/', Parameters::get()->currentFolder).'/'.$images;
+		$pathImage['normal'] = $Param['ndd'].implode('/', $Param['currentFolder']).'/'.$images;
 
 		// Vérification de l'existance des dossiers miniature
-		foreach(Parameters::get()->sizeImage as $name => $size) {
+		foreach($Param['sizeImage'] as $name => $size) {
 
 			// vérification si chaque dossier est bien créé
 			$currentFolderTest = null;
-			foreach(Parameters::get()->currentFolder as $folder) {
+			foreach($Param['currentFolder'] as $folder) {
 				$currentFolderTest .= '/'.$folder;
-				if(!is_dir($_SERVER['DOCUMENT_ROOT'].Parameters::get()->resizeFolder.'/'.$name.$currentFolderTest)) {
-					mkdir($_SERVER['DOCUMENT_ROOT'].Parameters::get()->resizeFolder.'/'.$name.$currentFolderTest);
+				if(!is_dir($Param['pathRoot'].$Param['resizeFolder'].'/'.$name.$currentFolderTest)) {
+					mkdir($Param['pathRoot'].$Param['resizeFolder'].'/'.$name.$currentFolderTest);
 				}
 			}
-			$pathSizeImage = Parameters::get()->ndd.Parameters::get()->resizeFolder.'/'.$name.$currentFolder;
+			$pathSizeImage = $Param['ndd'].$Param['resizeFolder'].'/'.$name.'/'.$currentFolder;
 			// vérification si chaque image existe bien
 			if (!is_file($pathSizeImage.'/'.$images)) {
 
-				$pathImagesTest = $_SERVER['DOCUMENT_ROOT'].Parameters::get()->resizeFolder.'/'.$name.$currentFolderTest.'/'.$images;
+				$pathImagesTest = $Param['pathRoot'].$Param['resizeFolder'].'/'.$name.$currentFolderTest.'/'.$images;
 				if(!file_exists($pathImagesTest))
 				{
 					// Création de la miniature
-					if (file_exists($_SERVER['DOCUMENT_ROOT'].implode('/', Parameters::get()->currentFolder).'/'.$images)) {
-						$oImage->load($_SERVER['DOCUMENT_ROOT'].implode('/', Parameters::get()->currentFolder).'/'.$images);
-						$_aSize = Parameters::get()->sizeImage->$name;
+					if (file_exists($Param['pathRoot'].implode('/', $Param['currentFolder']).'/'.$images)) {
+						$oImage->load($Param['pathRoot'].implode('/', $Param['currentFolder']).'/'.$images);
+						$_aSize = $Param['sizeImage'][$name];
 						$oImage->resize($_aSize[0], $_aSize[1]);
 						$oImage->save($pathImagesTest);
 					}

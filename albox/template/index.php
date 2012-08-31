@@ -6,32 +6,32 @@ if($this)
 		$$key = $val;
 	}
 	// Assignation de l'url
-	$ndd = Parameters::get()->ndd;
+	$Param = Parameters::get();
 	?>
 	<html>
 	  <head>
 		<title>Diaporama </title>
 		<!-- Bootstrap -->
-		<link href="<?php echo $ndd;?>albox/public/css/bootstrap.min.css" rel="stylesheet">
+		<link href="<?php echo $Param['ndd'];?>albox/public/css/bootstrap.min.css" rel="stylesheet">
 		<!-- Le styles -->
-		<link href="<?php echo $ndd;?>albox/public/css/bootstrap.css" rel="stylesheet">
-		<link href="<?php echo $ndd;?>albox/public/css/bootstrap-responsive.css" rel="stylesheet">
+		<link href="<?php echo $Param['ndd'];?>albox/public/css/bootstrap.css" rel="stylesheet">
+		<link href="<?php echo $Param['ndd'];?>albox/public/css/bootstrap-responsive.css" rel="stylesheet">
 	  </head>
 	  <body>
 		<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span12">
-				<h1>Diaporama</h1>
+				<h1><?php echo $Param['title'];?></h1>
 				<ul class="breadcrumb">
-					<li><a href="<?php echo $ndd.'index.php';?>">Accueil</a> <span class="divider">/</span></li>
+					<li><a href="<?php echo $Param['ndd'].'index.php';?>">Accueil</a> <span class="divider">/</span></li>
 					<?php 
 					$currentFolder = null;
 					$allFolder = null;
-					if (isset(Parameters::get()->currentFolder)) {
-						foreach (Parameters::get()->currentFolder as $currentFolder) {
+					if (isset($Param['currentFolder'])) {
+						foreach ($Param['currentFolder'] as $currentFolder) {
 							$allFolder .= '/'.$currentFolder;  
 							?>
-								<li><a href="<?php echo $ndd.'index.php'.$allFolder;?>"><?php echo $currentFolder;?></a> <span class="divider">/</span></li>
+								<li><a href="<?php echo $Param['ndd'].'index.php'.$allFolder;?>"><?php echo $currentFolder;?></a> <span class="divider">/</span></li>
 							<?php	
 						}
 					}
@@ -45,7 +45,7 @@ if($this)
 				<ul class="nav nav-tabs nav-stacked">
 					<?php 
 					foreach ($_aFolders as $folder){ ?>
-						<li><a href="<?php echo $ndd.'index.php'.$allFolder.'/'.$folder;?>"><?php echo $folder;?></a></li>
+						<li><a href="<?php echo $Param['ndd'].'index.php'.$allFolder.'/'.$folder;?>"><?php echo $folder;?></a></li>
 					<?php } ?>
 				</ul>
 				<?php
@@ -83,8 +83,8 @@ if($this)
 			</div>
 		  </div>
 		</div>
-		<script src="<?php echo $ndd;?>albox/public/js/jquery-1.8.0.min.js"></script>
-		<script src="<?php echo $ndd;?>albox/public/js/bootstrap.min.js"></script>
+		<script src="<?php echo $Param['ndd'];?>albox/public/js/jquery-1.8.0.min.js"></script>
+		<script src="<?php echo $Param['ndd'];?>albox/public/js/bootstrap.min.js"></script>
 	  </body>
 	</html>
 	<?php

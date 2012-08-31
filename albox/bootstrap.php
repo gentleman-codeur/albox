@@ -6,6 +6,11 @@
  * @PHP version : >  5.2.0
  */
 
+// Verification si la librairie gd est bien chargé :
+if (!extension_loaded('gd')) {
+	die("Librairie GD non installé, veuillez contacter votre hébergeur");
+}
+
 // Chargement des classes
 if(is_dir(dirname(__FILE__).'/class')) {
 	
@@ -23,31 +28,15 @@ if(is_dir(dirname(__FILE__).'/class')) {
 }
 
 // Chargement de la configuration
-Parameters::load(dirname(__FILE__).'/parameters.json');
-
-// Vérification des droits d'écriture du dossier images
-if (!is_writable(dirname(__FILE__).'/../'.Parameters::get()->resizeFolder)) {
-	die("Dossier '".Parameters::get()->resizeFolder."' non accessible en écriture <a href=''>aide</a>.");
-}
-
-// Vérification de l'existance des répertoires
-if(isset(Parameters::get()->sizeImage) && sizeof(Parameters::get()->sizeImage) > 0){
-	$path = dirname(__FILE__).'/../'.Parameters::get()->resizeFolder;
-	foreach(Parameters::get()->sizeImage as $name => $size) {
-		if (!is_dir($path.'/'.$name)) {
-			mkdir($path.'/'.$name);
-		}
-	}
-} else {
-	die("Pas de dossier de miniature");
-}
+Parameters::load(dirname(__FILE__).'/parameters.ini');
 
 // Récupération du chemin de navigation
-preg_match('#(.*)index.php\/(.*)#i', $_SERVER['SCRIPT_URI'], $info);
+$uriComplete = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+preg_match('#(.*)index.php\/(.*)#i', $uriComplete, $info);
 if(isset($info[1])) {
 	Parameters::set('ndd', $info[1]);
 } else {
-	Parameters::set('ndd', str_replace('index.php', '', $_SERVER['SCRIPT_URI']));
+	Parameters::set('ndd', str_replace('index.php', '', $uriComplete);
 }
 if(isset($info[2])) {
 	if(stripos($info[2], '/')){
@@ -55,4 +44,27 @@ if(isset($info[2])) {
 	} else {
 		Parameters::set('currentFolder', array('0' => $info[2]));
 	}
+}
+if($_SERVER['SCRIPT_FILENAME']) {
+	Parameters::set('pathRoot', str_replace('index.php', '', $_SERVER['SCRIPT_FILENAME']));
+} else {
+	die('Problème de paramètre serveur');
+}
+
+// Vérification des droits d'écriture du dossier images
+$Param = Parameters::get();
+if (!is_writable($Param['pathRoot'].$Param['resizeFolder'])) {
+	die("Dossier '".$Param['resizeFolder']."' non accessible en écriture <a href=''>aide</a>.");
+}
+
+// Vérification de l'existance des répertoires
+if(isset($Param['sizeImage']) && sizeof($Param['sizeImage']) > 0){
+	$path = $Param['pathRoot'].$Param['resizeFolder'];
+	foreach($Param['sizeImage'] as $name => $size) {
+		if (!is_dir($path.'/'.$name)) {
+			mkdir($path.'/'.$name);
+		}
+	}
+} else {
+	die("Pas de dossier de miniature");
 }

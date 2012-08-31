@@ -8,16 +8,17 @@ class Folder {
 
 		$_element = array();
 		// on ouvre le contenu du dossier courant
-		$dir = opendir($rootDir); 
+		$dir = opendir(str_replace('%20', ' ', $rootDir)); 
 		if(!$dir)
 		{
 			return false;
 		}
+		$Param = Parameters::get();
 		while($element = readdir($dir)) 
 		{
 			if($element != '.' && $element != '..') 
 			{
-				if (preg_match('#(.*)\.'.implode('|', Parameters::get()->allowFormat).'#i', $element)) 
+				if (preg_match('#(.*)\.'.implode('|', $Param['allowFormat']).'#i', $element)) 
 				{
 					$_element['image'][] = $element;
 				} 
@@ -25,7 +26,7 @@ class Folder {
 				{
 					$_element['text'][] = $element;
 				} 
-				elseif(is_dir($rootDir.'/'.$element) && !in_array($element, Parameters::get()->excludeFolder))
+				elseif(is_dir($rootDir.'/'.$element) && !in_array($element, $Param['excludeFolder']))
 				{
 					$_element['folder'][] = $element;
 				}
