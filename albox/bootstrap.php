@@ -38,6 +38,7 @@ if(isset($info[1])) {
 } else {
 	Parameters::set('ndd', str_replace('index.php', '', $uriComplete));
 }
+
 if(isset($info[2])) {
 	if(stripos($info[2], '/')){
 		Parameters::set('currentFolder', explode('/', $info[2]));
