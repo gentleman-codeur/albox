@@ -36,7 +36,7 @@ preg_match('#(.*)index.php\/(.*)#i', $uriComplete, $info);
 if(isset($info[1])) {
 	Parameters::set('ndd', $info[1]);
 } else {
-	Parameters::set('ndd', str_replace('index.php', '', $uriComplete);
+	Parameters::set('ndd', str_replace('index.php', '', $uriComplete));
 }
 if(isset($info[2])) {
 	if(stripos($info[2], '/')){
