@@ -10,12 +10,19 @@ if($this)
 	?>
 	<html>
 	  <head>
+	  	<meta charset="utf-8">
 		<title>Diaporama </title>
 		<!-- Bootstrap -->
 		<link href="<?php echo $Param['ndd'];?>albox/public/css/bootstrap.min.css" rel="stylesheet">
 		<!-- Le styles -->
 		<link href="<?php echo $Param['ndd'];?>albox/public/css/bootstrap.css" rel="stylesheet">
 		<link href="<?php echo $Param['ndd'];?>albox/public/css/bootstrap-responsive.css" rel="stylesheet">
+		<link href="<?php echo $Param['ndd'];?>albox/public/css/colorbox.css" rel="stylesheet">
+
+		<script src="<?php echo $Param['ndd'];?>albox/public/js/jquery-1.8.0.min.js"></script>
+		<script src="<?php echo $Param['ndd'];?>albox/public/js/bootstrap.min.js"></script>
+		<script src="<?php echo $Param['ndd'];?>albox/public/js/jquery.colorbox.js"></script>
+
 	  </head>
 	  <body>
 		<div class="container-fluid">
@@ -53,38 +60,34 @@ if($this)
 			?>
 			</div>
 			<div class="span9">
-				<?php if(isset($_aImages)) { ?>
-					<div id="myCarousel" class="carousel slide">
-					  <!-- Carousel items -->
-					  <div class="carousel-inner">
-						<?php 
-						$cpt = 1;
-						foreach ($_aImages as $images) { 
-							?>
-							<div class="item <?php if($cpt == 1){ echo "active"; } ?>">
-								<img src="<?php echo $images['path']['web'];?>" />	
-							</div>
-							<?php
-							$cpt++;
-						} 
+				<?php if(isset($_aImages)) { 
+					foreach ($_aImages as $images) { 
 						?>
-					  </div>
-					  <!-- Carousel nav -->
-					  <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-					  <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
-					</div>
-					<script type="script/javascript" >
-					$('.carousel').carousel({
-						interval: 2000	
-					})
+						<p style="float:left;margin:10px">
+							<a href="<?php echo $images['path']['web'];?>" rel="carousel" class="carousel" title="<?php echo $images['name'];?> <a href='<?php echo $images['path']['normal'];?>' class='btn btn-inverse btn-mini' target='_blank' ><i class='icon-download-alt icon-white'></i>Télécharger</a>" >
+							<img src="<?php echo $images['path']['mini'];?>" width="<?php echo $Param['sizeImage']['mini'][0];?>" height="<?php echo $Param['sizeImage']['mini'][1];?>" class="img-polaroid" />	
+							</a>
+						</p>
+						<?php
+					} 
+					?>
+					<script  >
+					$(document).ready(function(){
+						$('.carousel').colorbox({
+							rel:'carousel',
+							transition:"none",
+							width:"80%",
+							height:"90%",
+							slideshowSpeed:<?php echo $Param['slideshowSpeed']*1000;?>,
+							slideshow:true
+						})
+					});
 					</script>
 				<?php } ?>
 				<!--Body content-->
 			</div>
 		  </div>
 		</div>
-		<script src="<?php echo $Param['ndd'];?>albox/public/js/jquery-1.8.0.min.js"></script>
-		<script src="<?php echo $Param['ndd'];?>albox/public/js/bootstrap.min.js"></script>
 	  </body>
 	</html>
 	<?php
