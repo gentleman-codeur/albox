@@ -18,6 +18,10 @@ if($this)
 		<link href="<?php echo $Param['ndd'];?>albox/public/css/bootstrap.css" rel="stylesheet">
 		<link href="<?php echo $Param['ndd'];?>albox/public/css/bootstrap-responsive.css" rel="stylesheet">
 		<link href="<?php echo $Param['ndd'];?>albox/public/css/colorbox.css" rel="stylesheet">
+		<style>
+			.picture { margin:10px;display:inline;position: relative;float:left;text-align:center; 
+			width:<?php echo ((int)$Param['sizeImage']['mini'][0]+10);?>px;height:<?php echo ((int)$Param['sizeImage']['mini'][1]+10);?>px }
+		</style>
 
 		<script src="<?php echo $Param['ndd'];?>albox/public/js/jquery-1.8.0.min.js"></script>
 		<script src="<?php echo $Param['ndd'];?>albox/public/js/bootstrap.min.js"></script>
@@ -45,27 +49,31 @@ if($this)
 					?>
 				</ul>
 			</div>
-			<div class="span2">
+		</div>
+		<div class="row-fluid">
 			<?php
+			$largeView = 12;
 			if (isset($_aFolders)) {
+				$largeView = 9;
 				?>
-				<ul class="nav nav-tabs nav-stacked">
-					<?php 
-					foreach ($_aFolders as $folder){ ?>
-						<li><a href="<?php echo $Param['ndd'].'index.php'.$allFolder.'/'.$folder;?>"><?php echo $folder;?></a></li>
-					<?php } ?>
-				</ul>
+				<div class="span2">
+					<ul class="nav nav-tabs nav-stacked">
+						<?php 
+						foreach ($_aFolders as $folder){ ?>
+							<li><a href="<?php echo $Param['ndd'].'index.php'.$allFolder.'/'.$folder;?>"><?php echo $folder;?></a></li>
+						<?php } ?>
+					</ul>
+				</div>
 				<?php
 			}
 			?>
-			</div>
-			<div class="span9">
+			<div class="span<?php echo $largeView;?>">
 				<?php if(isset($_aImages)) { 
 					foreach ($_aImages as $images) { 
 						?>
-						<p style="float:left;margin:10px">
+						<p class="picture" >
 							<a href="<?php echo $images['path']['web'];?>" rel="carousel" class="carousel" title="<?php echo $images['name'];?> <a href='<?php echo $images['path']['normal'];?>' class='btn btn-inverse btn-mini' target='_blank' ><i class='icon-download-alt icon-white'></i>Télécharger</a>" >
-							<img src="<?php echo $images['path']['mini'];?>" width="<?php echo $Param['sizeImage']['mini'][0];?>" height="<?php echo $Param['sizeImage']['mini'][1];?>" class="img-polaroid" />	
+							<img src="<?php echo $images['path']['mini'];?>" class="img-polaroid" />	
 							</a>
 						</p>
 						<?php
@@ -78,7 +86,7 @@ if($this)
 							transition:"none",
 							width:"80%",
 							height:"90%",
-							slideshowSpeed:<?php echo $Param['slideshowSpeed']*1000;?>,
+							slideshowSpeed:<?php echo (int)$Param['slideshowSpeed']*1000;?>,
 							slideshow:true
 						})
 					});
@@ -88,6 +96,21 @@ if($this)
 			</div>
 		  </div>
 		</div>
+		<?php if(isset($Param['analytics'])) { ?>
+			<script type="text/javascript">
+
+			  var _gaq = _gaq || [];
+			  _gaq.push(['_setAccount', '<?php echo $Param['analytics'];?>');
+			  _gaq.push(['_trackPageview']);
+
+			  (function() {
+			    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+			  })();
+
+			</script>
+		<?php } ?>
 	  </body>
 	</html>
 	<?php

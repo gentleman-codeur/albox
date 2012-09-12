@@ -46,10 +46,13 @@ if (isset($_element['image'])) {
 				{
 					// Création de la miniature
 					if (file_exists($Param['pathRoot'].implode('/', $Param['currentFolder']).'/'.$images)) {
-						$oImage->load($Param['pathRoot'].implode('/', $Param['currentFolder']).'/'.$images);
 						$_aSize = $Param['sizeImage'][$name];
-						$oImage->resize($_aSize[0], $_aSize[1]);
-						$oImage->save($pathImagesTest);
+						// *** 1) Initialize / load image  
+						$resizeObj = new Resize($Param['pathRoot'].implode('/', $Param['currentFolder']).'/'.$images);  
+						// *** 2) Resize image (options: exact, portrait, landscape, auto, crop)  
+						$resizeObj->resizeImage($_aSize[0], $_aSize[1], 'auto');  
+						// *** 3) Save image  
+						$resizeObj->saveImage($pathImagesTest);
 					}
 				}
 			}
